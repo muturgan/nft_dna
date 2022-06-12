@@ -14,7 +14,7 @@ dotenv.config();
 // Go to https://hardhat.org/config/ to learn more
 
 const config: HardhatUserConfig = {
-	solidity: '0.8.7',
+	solidity: '0.8.14',
 	defaultNetwork: 'hardhat',
 	networks: {
 		hardhat: {
