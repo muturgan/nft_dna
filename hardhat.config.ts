@@ -1,8 +1,6 @@
 import dotenv from 'dotenv';
 import { HardhatUserConfig } from 'hardhat/config';
 
-import './tasks';
-
 import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
 import '@typechain/hardhat';
