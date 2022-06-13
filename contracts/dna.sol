@@ -59,6 +59,10 @@ contract DNA is
 		return "https://ipfs.io/ipfs/";
 	}
 
+	function contractURI() external view returns(string memory) {
+		return string.concat(_baseURI(), FOLDER);
+	}
+
 	function mint() public payable {
 		uint timestamp = block.timestamp;
 		require(timestamp >= PRESALE_START_DATE, "the sale isn't started");
