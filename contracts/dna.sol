@@ -19,8 +19,8 @@ contract DNA is
 	uint private constant MAX_NFT_COUNT = 5000;
 	uint public constant PRESALE_START_DATE = 1655236800; // 2022-06-14T20:00:00 UTC
 	uint public constant SALE_START_DATE    = 1655928000; // 2022-06-22T20:00:00 UTC
-	uint private constant PRESALE_PRICE = 0.5 ether;
-	uint private constant SALE_PRICE    = 0.6 ether;
+	uint public constant PRESALE_PRICE = 0.5 ether;
+	uint public constant SALE_PRICE    = 0.6 ether;
 	string private FOLDER;
 
 	address private immutable owner;

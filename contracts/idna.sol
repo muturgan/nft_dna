@@ -16,4 +16,6 @@ interface IDNA is IERC721, IERC721Metadata, IERC721Enumerable {
 	function currentPrice() external view returns(uint);
 	function PRESALE_START_DATE() external view returns(uint);
 	function SALE_START_DATE() external view returns(uint);
+	function PRESALE_PRICE() external view returns(uint);
+	function SALE_PRICE() external view returns(uint);
 }
