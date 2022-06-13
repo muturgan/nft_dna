@@ -80,7 +80,7 @@ contract DNA is
 	}
 
 	function setTokenRoyalty(uint tokenId, uint96 feeNumerator) external onlyOwner {
-		 require(_exists(tokenId), "nonexistent token");
+		require(_exists(tokenId), "nonexistent token");
 		_setTokenRoyalty(tokenId, owner, feeNumerator);
 	}
 
