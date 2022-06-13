@@ -32,7 +32,7 @@ describe('DNA', async () => {
 		await dna.deployed();
 	});
 
-	it(`the sale isn't started`, async () => {
+	it(`Распродажа ещё не началась`, async () => {
 		const [, , user2Signer] = await ethers.getSigners();
 		const user2Connection = dna.connect(user2Signer);
 
@@ -43,7 +43,7 @@ describe('DNA', async () => {
 			.to.be.revertedWith(`the sale isn't started`);
 	});
 
-	it(`should start a presale`, async () => {
+	it(`Должен начаться пресейл`, async () => {
 		const [, , user2Signer, user3Signer] = await ethers.getSigners();
 
 		await network.provider.send(
@@ -66,7 +66,7 @@ describe('DNA', async () => {
 		assert.strictEqual(currentPrice, presalePrice);
 	});
 
-	it(`mint a one token on presale`, async () => {
+	it(`Заминтить 1 токен на пресейле`, async () => {
 		const [, , user2Signer] = await ethers.getSigners();
 		const user2Connection = dna.connect(user2Signer);
 
@@ -80,7 +80,7 @@ describe('DNA', async () => {
 		assert.strictEqual(Number(nftBalance), 1);
 	});
 
-	it(`mint within a receive method`, async () => {
+	it(`Заминтить 1 токен на пресейле простым переводом средств`, async () => {
 		const [, , , user3Signer] = await ethers.getSigners();
 
 		const tx = await user3Signer.sendTransaction({
@@ -97,7 +97,7 @@ describe('DNA', async () => {
 		assert.strictEqual(Number(nftBalance), 1);
 	});
 
-	it(`mint two tokens on presale`, async () => {
+	it(`Заминтить 2 токена на пресейле`, async () => {
 		const [, , , , user4Signer] = await ethers.getSigners();
 		const user4Connection = dna.connect(user4Signer);
 
@@ -111,7 +111,7 @@ describe('DNA', async () => {
 		assert.strictEqual(Number(totalSupply), 4);
 	});
 
-	it(`should start a sale`, async () => {
+	it(`Должен начаться сейл`, async () => {
 		const [, , user2Signer, user3Signer] = await ethers.getSigners();
 
 		await network.provider.send(
@@ -134,7 +134,7 @@ describe('DNA', async () => {
 		assert.strictEqual(currentPrice, salePrice);
 	});
 
-	it(`mint only one token if not enougth of money`, async () => {
+	it(`Должен заминтиться только 1 токен, если не хватает средств на 2`, async () => {
 		const [, , , , , user5Signer] = await ethers.getSigners();
 		const user5Connection = dna.connect(user5Signer);
 
@@ -148,7 +148,7 @@ describe('DNA', async () => {
 		assert.strictEqual(Number(totalSupply), 5);
 	});
 
-	it(`mint only one token if it is a last token (and close a sale)`, async () => {
+	it(`Должен заминтиться только 1 токен, если остался последний токен. (И закрытие продажи)`, async () => {
 		const [, , , , , , user6Signer] = await ethers.getSigners();
 		const user6Connection = dna.connect(user6Signer);
 
@@ -165,7 +165,7 @@ describe('DNA', async () => {
 		assert.strictEqual(status, SaleStatus.Finished);
 	});
 
-	it(`the sale is over`, async () => {
+	it(`Продажа закрыта`, async () => {
 		const [, , , , user4Signer] = await ethers.getSigners();
 		const user4Connection = dna.connect(user4Signer);
 
@@ -173,7 +173,7 @@ describe('DNA', async () => {
 			.to.be.revertedWith(`the sale is over`);
 	});
 
-	it(`should prevent a withdraw`, async () => {
+	it(`Левый адрес не может вывести средства с контракта`, async () => {
 		const [, , , , user4Signer] = await ethers.getSigners();
 		const user4Connection = dna.connect(user4Signer);
 
@@ -181,7 +181,7 @@ describe('DNA', async () => {
 			.to.be.revertedWith(`not an owner`);
 	});
 
-	it(`should withdraw correctly`, async () => {
+	it(`Владелец успешно выводит средства с контракта`, async () => {
 		const provider = ethers.provider;
 
 		const [, ownerSigner] = await ethers.getSigners();
@@ -202,7 +202,7 @@ describe('DNA', async () => {
 		);
 	});
 
-	it(`withdraw within a recieve method`, async () => {
+	it(`Владелец успешно выводит средства с контракта с помощью простого перевода средств`, async () => {
 		const provider = ethers.provider;
 
 		const [, ownerSigner, anotherSigner] = await ethers.getSigners();
@@ -234,7 +234,7 @@ describe('DNA', async () => {
 		);
 	});
 
-	it(`royalty was inited with a default value`, async () => {
+	it(`Проверка значений royalty по умолчанию`, async () => {
 		const p2pSalePrice = 1000;
 		const [, ownerSigner] = await ethers.getSigners();
 		const [royaltyReceiver, royaltyAmount] = await dna.royaltyInfo(1, p2pSalePrice);
@@ -243,7 +243,7 @@ describe('DNA', async () => {
 		assert.strictEqual(Number(royaltyAmount), p2pSalePrice / 10); // default 10%
 	});
 
-	it(`should prevent to set a token royalty`, async () => {
+	it(`Левый адрес не может изменить значение royalty для конкретного токена`, async () => {
 		const [, , , , user4Signer] = await ethers.getSigners();
 		const user4Connection = dna.connect(user4Signer);
 
@@ -251,7 +251,7 @@ describe('DNA', async () => {
 			.to.be.revertedWith(`not an owner`);
 	});
 
-	it(`should prevent to set default royalty`, async () => {
+	it(`Левый адрес не может изменить значение royalty по умолчанию`, async () => {
 		const [, , , , user4Signer] = await ethers.getSigners();
 		const user4Connection = dna.connect(user4Signer);
 
@@ -259,7 +259,7 @@ describe('DNA', async () => {
 			.to.be.revertedWith(`not an owner`);
 	});
 
-	it(`should update royalty`, async () => {
+	it(`Владелец может изменить значения royalty`, async () => {
 		const p2pSalePrice = 1000;
 		const [, ownerSigner] = await ethers.getSigners();
 		const ownerConnection = dna.connect(ownerSigner);
@@ -274,7 +274,7 @@ describe('DNA', async () => {
 		assert.strictEqual(Number(token2RoyaltyAmount), p2pSalePrice / 20);
 	});
 
-	it(`should prevent to set a royalty for nonexistent token`, async () => {
+	it(`Нельзя поменять значение royalty для несуществующего токена`, async () => {
 		const [, ownerSigner] = await ethers.getSigners();
 		const ownerConnection = dna.connect(ownerSigner);
 
