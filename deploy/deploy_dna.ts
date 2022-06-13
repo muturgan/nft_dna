@@ -8,6 +8,7 @@ const deployFunction: DeployFunction = async (hre) => {
 
 	await deploy('DNA', {
 		from: deployer,
+		args: ['address', 'folder'],
 		log: true,
 	});
 };
