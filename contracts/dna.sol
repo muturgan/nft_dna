@@ -17,13 +17,13 @@ contract DNA is
 	enum SaleStatus {NotStarted, PreSale, Sale, Finished}
 
 	uint private constant MAX_NFT_COUNT = 5000;
-	uint public constant PRESALE_START_DATE = 1655215200; // 2022-06-14T20:00:00 UTC
-	uint public constant SALE_START_DATE    = 1655906400; // 2022-06-22T20:00:00 UTC
+	uint public constant PRESALE_START_DATE = 1655236800; // 2022-06-14T20:00:00 UTC
+	uint public constant SALE_START_DATE    = 1655928000; // 2022-06-22T20:00:00 UTC
 	uint public constant PRESALE_PRICE = 0.5 ether;
 	uint public constant SALE_PRICE    = 0.6 ether;
 	string private FOLDER;
 
-	address public immutable owner;
+	address private immutable owner;
 	uint private tokenIdCounter;
 
 	modifier onlyOwner() {
@@ -33,10 +33,9 @@ contract DNA is
 
 
 	constructor(address _owner, string memory _folder) ERC721("Norman's Duel: Apes", "NDA") {
+		_setDefaultRoyalty(_owner, 1000); // owner zero addres check inside
 		owner = _owner;
 		FOLDER = _folder;
-
-		_setDefaultRoyalty(_owner, 1000);
 	}
 
 	function _baseURI() internal pure override returns(string memory) {
@@ -71,7 +70,7 @@ contract DNA is
 		}
 		uint256 tokenId = tokenIdCounter;
 		_safeMint(to, tokenId);
-		string memory uri = string.concat(FOLDER, "/", Strings.toString(tokenIdCounter), ".json");
+		string memory uri = string.concat(FOLDER, "/", Strings.toString(tokenId), ".json");
 		_setTokenURI(tokenId, uri);
 	}
 
