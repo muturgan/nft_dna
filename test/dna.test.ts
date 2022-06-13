@@ -61,6 +61,9 @@ describe('DNA', async () => {
 
 		const status = await dna.saleStatus();
 		assert.strictEqual(status, SaleStatus.PreSale);
+
+		const currentPrice = await dna.currentPrice();
+		assert.strictEqual(currentPrice, presalePrice);
 	});
 
 	it(`mint a one token on presale`, async () => {
@@ -126,6 +129,9 @@ describe('DNA', async () => {
 
 		const status = await dna.saleStatus();
 		assert.strictEqual(status, SaleStatus.Sale);
+
+		const currentPrice = await dna.currentPrice();
+		assert.strictEqual(currentPrice, salePrice);
 	});
 
 	it(`mint only one token if not enougth of money`, async () => {
@@ -226,5 +232,53 @@ describe('DNA', async () => {
 			ownerBalanceAfter.sub(ownerBalanceBefore),
 			testValue.sub(gasUsed.mul(gasPrice)),
 		);
+	});
+
+	it(`royalty was inited with a default value`, async () => {
+		const p2pSalePrice = 1000;
+		const [, ownerSigner] = await ethers.getSigners();
+		const [royaltyReceiver, royaltyAmount] = await dna.royaltyInfo(1, p2pSalePrice);
+
+		assert.strictEqual(royaltyReceiver, ownerSigner.address);
+		assert.strictEqual(Number(royaltyAmount), p2pSalePrice / 10); // default 10%
+	});
+
+	it(`should prevent to set a token royalty`, async () => {
+		const [, , , , user4Signer] = await ethers.getSigners();
+		const user4Connection = dna.connect(user4Signer);
+
+		await expect(user4Connection.setTokenRoyalty(1, 2222))
+			.to.be.revertedWith(`not an owner`);
+	});
+
+	it(`should prevent to set default royalty`, async () => {
+		const [, , , , user4Signer] = await ethers.getSigners();
+		const user4Connection = dna.connect(user4Signer);
+
+		await expect(user4Connection.setDefaultRoyalty(2222))
+			.to.be.revertedWith(`not an owner`);
+	});
+
+	it(`should update royalty`, async () => {
+		const p2pSalePrice = 1000;
+		const [, ownerSigner] = await ethers.getSigners();
+		const ownerConnection = dna.connect(ownerSigner);
+
+		await ownerConnection.setDefaultRoyalty(5000); // 50%
+		await ownerConnection.setTokenRoyalty(2, 500); // 5%
+
+		const [, defaultRoyaltyAmount] = await dna.royaltyInfo(1, p2pSalePrice);
+		assert.strictEqual(Number(defaultRoyaltyAmount), p2pSalePrice / 2);
+
+		const [, token2RoyaltyAmount] = await dna.royaltyInfo(2, p2pSalePrice);
+		assert.strictEqual(Number(token2RoyaltyAmount), p2pSalePrice / 20);
+	});
+
+	it(`should prevent to set a royalty for nonexistent token`, async () => {
+		const [, ownerSigner] = await ethers.getSigners();
+		const ownerConnection = dna.connect(ownerSigner);
+
+		await expect(ownerConnection.setTokenRoyalty(100500, 500))
+			.to.be.revertedWith(`nonexistent token`);
 	});
 });
