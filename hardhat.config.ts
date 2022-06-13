@@ -19,7 +19,7 @@ const config: HardhatUserConfig = {
 		settings: {
 			optimizer: {
 				enabled: true,
-				runs: 1000,
+				runs: 200,
 			},
 		},
 	},
@@ -38,12 +38,7 @@ const config: HardhatUserConfig = {
 	},
 	namedAccounts: {
 		deployer: 0,
-		candidate1: 1,
-		candidate2: 2,
-		candidate3: 3,
-		user1: 4,
-		user2: 5,
-		user3: 6,
+		dnaOwner: 1,
 	},
 };
 
