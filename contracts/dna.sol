@@ -16,26 +16,43 @@ contract DNA is
 {
 	enum SaleStatus {NotStarted, PreSale, Sale, Finished}
 
-	uint private constant MAX_NFT_COUNT = 5000;
-	uint public constant PRESALE_START_DATE = 1655236800; // 2022-06-14T20:00:00 UTC
-	uint public constant SALE_START_DATE    = 1655928000; // 2022-06-22T20:00:00 UTC
-	uint public constant PRESALE_PRICE = 0.5 ether;
-	uint public constant SALE_PRICE    = 0.6 ether;
+	uint private immutable MAX_NFT_COUNT;
+	uint public immutable PRESALE_START_DATE;
+	uint public immutable SALE_START_DATE;
+	uint public immutable PRESALE_PRICE;
+	uint public immutable SALE_PRICE;
 	string private FOLDER;
 
 	address private immutable owner;
 	uint private tokenIdCounter;
 
 	modifier onlyOwner() {
-		require(owner == msg.sender, "caller is not the owner");
+		require(owner == msg.sender, "not an owner");
 		_;
 	}
 
 
-	constructor(address _owner, string memory _folder) ERC721("Norman's Duel: Apes", "NDA") {
+	constructor(
+		address _owner,
+		string memory _folder,
+		uint _maxNftCount,
+		uint _presaleStartDate,
+		uint _saleStartDate,
+		uint _presalePrice,
+		uint _salePrice
+	) ERC721("Norman's Duel: Apes", "NDA") {
 		_setDefaultRoyalty(_owner, 1000); // owner zero addres check inside
 		owner = _owner;
 		FOLDER = _folder;
+		require(_maxNftCount > 0, "zero nft count");
+		MAX_NFT_COUNT = _maxNftCount;
+		PRESALE_START_DATE = _presaleStartDate;
+		require(_saleStartDate > _presaleStartDate, "incorrect saleStartDate");
+		SALE_START_DATE = _saleStartDate;
+		require(_presalePrice > 0, "zero presale price");
+		PRESALE_PRICE = _presalePrice;
+		require(_salePrice > _presalePrice, "incorrect salePrice");
+		SALE_PRICE = _salePrice;
 	}
 
 	function _baseURI() internal pure override returns(string memory) {
@@ -83,7 +100,7 @@ contract DNA is
 		_setTokenRoyalty(tokenId, owner, feeNumerator);
 	}
 
-	function withdaraw() external onlyOwner {
+	function withdaraw() public onlyOwner {
 		payable(owner).transfer(address(this).balance);
 	}
 
@@ -98,14 +115,20 @@ contract DNA is
 		if (totalSupply() == MAX_NFT_COUNT) {
 			return SaleStatus.Finished;
 		}
-		if (block.timestamp < SALE_START_DATE) {
+		if (block.timestamp >= SALE_START_DATE) {
 			return SaleStatus.Sale;
 		}
 		return SaleStatus.PreSale;
 	}
 
 
-	receive() external payable {}
+	receive() external payable {
+		if (msg.sender == owner) {
+			withdaraw();
+		} else {
+			mint();
+		}
+	}
 
 	fallback() external payable {}
 
