@@ -6,7 +6,7 @@ const parseEther = ethers.utils.parseEther;
 const presalePrice = parseEther('0.5');
 const salePrice = parseEther('0.6');
 const folder = 'folder_hash';
-const maxCount = 6;
+const maxCount = 8;
 const presaleStartDate = ((Date.now() + (1000 * 60 * 3)) / 1000).toFixed();
 const saleStartDate = ((Date.now() + (1000 * 60 * 60 * 24 * 3)) / 1000).toFixed();
 
@@ -148,6 +148,23 @@ describe('DNA', async () => {
 		assert.strictEqual(Number(totalSupply), 5);
 	});
 
+	it(`Должно заминтиться 2 токена, если средств переведено больше чем на 2 токена`, async () => {
+		const [, , , , , , , user7Signer] = await ethers.getSigners();
+
+		const tx = await user7Signer.sendTransaction({
+			from: user7Signer.address,
+			to: dna.address,
+			value: salePrice.mul(10),
+		});
+		await tx.wait();
+
+		const nftBalance = await dna.balanceOf(user7Signer.address);
+		assert.strictEqual(Number(nftBalance), 2);
+
+		const totalSupply = await dna.totalSupply();
+		assert.strictEqual(Number(totalSupply), 7);
+	});
+
 	it(`Должен заминтиться только 1 токен, если остался последний токен. (И закрытие продажи)`, async () => {
 		const [, , , , , , user6Signer] = await ethers.getSigners();
 		const user6Connection = dna.connect(user6Signer);
@@ -159,7 +176,7 @@ describe('DNA', async () => {
 		assert.strictEqual(Number(nftBalance), 1);
 
 		const totalSupply = await dna.totalSupply();
-		assert.strictEqual(Number(totalSupply), 6);
+		assert.strictEqual(Number(totalSupply), 8);
 
 		const status = await user6Connection.saleStatus();
 		assert.strictEqual(status, SaleStatus.Finished);
