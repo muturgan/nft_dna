@@ -9,6 +9,7 @@ const folder = 'folder_hash';
 const maxCount = 8;
 const presaleStartDate = ((Date.now() + (1000 * 60 * 3)) / 1000).toFixed();
 const saleStartDate = ((Date.now() + (1000 * 60 * 60 * 24 * 3)) / 1000).toFixed();
+const baseUri = 'https://ipfs.io/ipfs/';
 
 const enum SaleStatus {NotStarted, PreSale, Sale, Finished}
 
@@ -298,4 +299,31 @@ describe('DNA', async () => {
 		await expect(ownerConnection.setTokenRoyalty(100500, 500))
 			.to.be.revertedWith(`nonexistent token`);
 	});
+
+	it(`Ссылка на токен формируется правильным образом`, async () => {
+		const contractUri = await dna.contractURI();
+		assert.strictEqual(contractUri, `${baseUri}${folder}`);
+
+		const tokenId = 1;
+		const token1Uri = await dna.tokenURI(tokenId);
+		assert.strictEqual(token1Uri, `${baseUri}${folder}/${tokenId}.json`);
+
+		await expect(dna.tokenURI(100500))
+			.to.be.revertedWith(`URI query for nonexistent token`);
+	});
+
+	it(`Поддержка интерфейсов`, async () => {
+		const some = await dna.supportsInterface('0xffffffff');
+		assert.strictEqual(some, false);
+		const erc165 = await dna.supportsInterface('0x01ffc9a7');
+		assert.strictEqual(erc165, true);
+		const erc721 = await dna.supportsInterface('0x80ac58cd');
+		assert.strictEqual(erc721, true);
+		const erc721metadata = await dna.supportsInterface('0x5b5e139f');
+		assert.strictEqual(erc721metadata, true);
+		const erc721enumerable = await dna.supportsInterface('0x780e9d63');
+		assert.strictEqual(erc721enumerable, true);
+	});
+
+
 });
