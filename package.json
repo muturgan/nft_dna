@@ -13,6 +13,7 @@
     "compile": "hardhat compile",
     "deploy": "hardhat deploy",
     "deploy-to-rinkepy": "hardhat deploy --network rinkeby",
+    "deploy-to-mainnet": "hardhat deploy --network mainnet",
     "verify": "hardhat verify",
     "verify-on-rinkeby": "hardhat verify  --network rinkeby",
     "test": "npm run compile && hardhat test",
