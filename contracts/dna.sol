@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: MIT
+// https://github.com/muturgan/nft_dna
+// https://linkedin.com/in/andrey-sakharov/
 pragma solidity ^0.8.14;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
